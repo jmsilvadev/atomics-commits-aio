@@ -17,7 +17,8 @@ const (
 	// ContentType is a type of header
 	ContentType = "Content-Type"
 	// TypeJSON is a type of a content type header
-	TypeJSON = "application/vnd.api+json"
+	TypeJSON    = "application/vnd.api+json"
+	invalidBody = "invalid body"
 )
 
 // NewRouter has all server routes
@@ -43,7 +44,7 @@ func CreateBlock(ctx context.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		itx := &responses.Transaction{}
 		if r.Body == nil {
-			jsonResponse, _ := responses.GenerateErrorResponse(402, errors.New("invalid body"))
+			jsonResponse, _ := responses.GenerateErrorResponse(402, errors.New(invalidBody))
 			w.Header().Set(ContentType, TypeJSON)
 			w.WriteHeader(400)
 			w.Write(jsonResponse)
@@ -51,7 +52,7 @@ func CreateBlock(ctx context.Context) http.HandlerFunc {
 		}
 		err := json.NewDecoder(r.Body).Decode(&itx)
 		if err != nil {
-			jsonResponse, _ := responses.GenerateErrorResponse(401, errors.New("invalid body"))
+			jsonResponse, _ := responses.GenerateErrorResponse(401, errors.New(invalidBody))
 			w.Header().Set(ContentType, TypeJSON)
 			w.WriteHeader(400)
 			w.Write(jsonResponse)
